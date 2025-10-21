@@ -345,6 +345,61 @@ If the specified resource group doesn't exist:
 3. Or create a new resource group in IBM Cloud
 
 
+## HashiCorp Vault Integration (Recommended)
+
+For enhanced security, use HashiCorp Vault to manage sensitive secrets instead of storing them in `.env` or `terraform.tfvars` files.
+
+### Secrets Managed by Vault
+
+The following critical secrets are stored in Vault:
+- **`ibmcloud_api_key`** - IBM Cloud API key for Terraform
+- **`verify_admin_user`** - IBM Verify admin email for Playwright
+- **`verify_admin_pass`** - IBM Verify admin password for Playwright
+
+### Quick Start with Vault
+
+**1. Start Vault (Docker):**
+```bash
+docker run --name vault-dev -d -p 8200:8200 -e "VAULT_DEV_ROOT_TOKEN_ID=root" hashicorp/vault
+```
+
+**2. Initialize secrets (first time only):**
+```bash
+# Linux/Mac
+./scripts/vault_setup.sh
+
+# Windows
+.\scripts\vault_setup.ps1
+```
+
+The script will prompt for:
+- IBM Cloud API Key
+- Admin Email  
+- Admin Password
+
+Secrets are stored in Vault and reused on subsequent runs.
+
+**3. Deploy with Vault:**
+```bash
+# Linux/Mac
+./scripts/update_env_vault.sh
+
+# Windows
+.\scripts\update_env_vault.ps1
+```
+
+This retrieves secrets from Vault and deploys your IBM Verify instance.
+
+### Benefits
+
+- No secrets in source code or config files
+- Centralized secret management
+- Audit trail of secret access
+- Easy secret rotation
+- Encrypted storage
+
+See **[scripts/VAULT_README.md](scripts/VAULT_README.md)** for complete documentation.
+
 ## Playwright Automation
 
 This project includes Playwright tests to automate IBM Verify Admin UI tasks, such as creating API clients. The test will automatically extract and save the API client credentials to your `.env` file!
