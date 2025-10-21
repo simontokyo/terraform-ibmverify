@@ -25,6 +25,12 @@ IBM_VERIFY_CLIENT_SECRET=${verify_secret}
 IBM_VERIFY_INSTANCE_ID=${verify_instance_id}
 
 # ============================================================================
+# Admin Login Credentials (for Playwright automation)
+# ============================================================================
+# IBM_VERIFY_ADMIN_EMAIL=your-email@ibm.com
+# IBM_VERIFY_ADMIN_PASSWORD=your-password
+
+# ============================================================================
 # API Client Credentials (Add these after creating API client in console)
 # ============================================================================
 # IBM_VERIFY_API_CLIENT_ID=your-api-client-id

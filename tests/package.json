@@ -1,0 +1,24 @@
+{
+  "name": "verify-playwright-tests",
+  "version": "1.0.0",
+  "description": "Playwright tests for IBM Verify Admin UI automation",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:ocr": "tsx test-ocr.ts"
+  },
+  "keywords": ["playwright", "ibm-verify", "automation"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^22.9.0",
+    "dotenv": "^16.4.5",
+    "sharp": "^0.33.5",
+    "tesseract.js": "^5.1.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
+

@@ -345,6 +345,38 @@ If the specified resource group doesn't exist:
 3. Or create a new resource group in IBM Cloud
 
 
+## Playwright Automation
+
+This project includes Playwright tests to automate IBM Verify Admin UI tasks, such as creating API clients. The test will automatically extract and save the API client credentials to your `.env` file!
+
+### Quick Start
+
+1. **Add credentials to `.env`** (in project root):
+   ```bash
+   IBM_VERIFY_ADMIN_EMAIL=your-email@jp.ibm.com
+   IBM_VERIFY_ADMIN_PASSWORD=your-password
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   cd tests
+   npm install
+   npx playwright install chromium
+   ```
+
+3. **Run tests**:
+   ```bash
+   npm test
+   ```
+
+4. **Done!** The test will automatically save `IBM_VERIFY_API_CLIENT_ID` and `IBM_VERIFY_API_CLIENT_SECRET` to your `.env` file.
+
+### Documentation
+- [QUICKSTART_PLAYWRIGHT.md](QUICKSTART_PLAYWRIGHT.md) - Quick setup guide
+- [PLAYWRIGHT_SETUP.md](PLAYWRIGHT_SETUP.md) - Complete setup documentation
+- [tests/README.md](tests/README.md) - Detailed test documentation
+- [tests/SETUP.md](tests/SETUP.md) - Step-by-step setup instructions
+
 ## Additional Resources
 
 ### Documentation
