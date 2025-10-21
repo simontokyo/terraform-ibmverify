@@ -1,0 +1,49 @@
+# Copy this file to terraform.tfvars and fill in your values
+# Minimal required configuration for IBM Verify deployment
+
+# ==============================================================================
+# REQUIRED PARAMETERS
+# ==============================================================================
+
+# IBM Cloud API Key (required)
+# Get your API key from: https://cloud.ibm.com/iam/apikeys
+ibmcloud_api_key = "YOUR_IBM_CLOUD_API_KEY"
+
+# Resource Group Name (required)
+# Specify an existing resource group name (e.g., "Default")
+# Or set to null to create a new one with the prefix
+resource_group = "Default"
+
+# Instance Name (required)
+# Choose a unique name for your IBM Verify instance
+instance_name = "my-verify-instance"
+
+# Hostname (required)
+# The hostname for your IBM Verify instance
+# This will be used to construct the dashboard URL: https://<hostname>.verify.ibm.com/ui/admin/
+# Use only lowercase letters, numbers, and hyphens
+hostname = "mycompany"
+
+# ==============================================================================
+# OPTIONAL PARAMETERS
+# ==============================================================================
+
+# Prefix for naming (optional)
+# Used when creating a new resource group (if resource_group is null)
+# prefix = "verify"
+
+# IBM Cloud Region (optional)
+# Default: "eu-de" - IBM Verify is ONLY available in eu-de (Frankfurt)
+# region = "eu-de"
+
+# Resource Tags (optional)
+# Tags to apply to resources
+# resource_tags = ["environment:dev", "project:myapp"]
+
+# Access Tags (optional)
+# Access tags for fine-grained access control
+# access_tags = ["env:dev"]
+
+# Environment file path (optional)
+# env_file_path = ".env"
+
