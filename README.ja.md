@@ -1,25 +1,20 @@
-# IBM Verify Terraform デプロイメント
+# IBM Verify を Terraform 使ってデプロイする
 
 ## IBM Verifyについて
 
-[IBM Verify](https://www.ibm.com/products/verify)は、クラウドネイティブのアイデンティティおよびアクセス管理（IAM）ソリューションで、以下を提供します：
+[IBM Verify](https://www.ibm.com/products/verify)は、IDおよびアクセス管理（IAM）ソリューションで、以下を提供します：
 
 - **シングルサインオン（SSO）** - アプリケーション間の統一されたアクセス
 - **多要素認証（MFA）** - SMS、TOTP、生体認証による強化されたセキュリティ
 - **パスワードレス認証** - FIDO2 WebAuthnサポート
-- **適応型アクセス** - AI駆動のリスクベース認証
-- **ユーザーライフサイクル管理** - 自動化されたオンボーディングとアクセス制御
-- **REST API** - 自動化と統合のためのプログラマティックアクセス
+- **ユーザーライフサイクル管理** - ユーザーとグループのアクセス制御
 
 ## このTerraform設定について
 
-このリポジトリは、IBM VerifyのIBM Cloudへのデプロイを自動化するインフラストラクチャアズコードを提供します。Terraformを使用することで、手動セットアップが不要になり、以下を実現します：
+このリポジトリは、IBM VerifyのIBM Cloudへのデプロイを自動化するコードを提供します。Terraformを使用することで、手動セットアップが不要になり、以下を実現します：
 
 - **自動プロビジョニング** - 単一のコマンドでIBM Verifyインスタンスをデプロイ
-- **一貫性のある設定** - 環境全体で再現可能なデプロイメント
-- **インフラストラクチャアズコード** - バージョン管理されたインフラストラクチャ
-- **自動認証情報管理** - サービス認証情報と.envファイルの生成
-- **リソースグループ統合** - 簡素化されたリソース組織化
+- **認証情報管理** - サービス認証情報と.envファイルの生成
 - **ホスト名自動化** - ダッシュボードURLの自動設定
 
 **使用する公式IBMモジュール:**
@@ -38,7 +33,7 @@
 
 3. **IBM Cloud APIキー**
    - 作成: https://cloud.ibm.com/iam/apikeys
-   - このキーを安全に保管し、バージョン管理にコミットしないでください
+   - このキーは、バージョン管理にコミットしないでください
 
 ## アーキテクチャ概要
 
@@ -114,7 +109,6 @@ graph TB
 │   ├── destroy.sh           # 削除スクリプト（Linux/Mac）
 │   └── destroy.ps1          # 削除スクリプト（Windows）
 ├── terraform.tfvars.example # 変数ファイルの例
-├── .gitignore              # Gitの除外ルール
 ├── README.md               # 英語版README
 └── README.ja.md            # 日本語版README（このファイル）
 ```
@@ -167,7 +161,7 @@ graph TB
    ibmcloud resource groups
    ```
    
-   または`resource_group = null`に設定して自動的に新しいものを作成できます！
+   または`resource_group = null`に設定して自動的に新しいものを作成できます！（権限があれば）
 
 ### ステップ2: IBM Verifyインスタンスのデプロイ
 
@@ -213,7 +207,7 @@ IBM_VERIFY_ACCOUNT_URL=https://mycompany.verify.ibm.com
 IBM_VERIFY_INSTANCE_ID=<instance-guid>
 ```
 
-### ステップ4: REST APIアクセスを有効化（オプション）
+### ステップ4: REST APIアクセスを有効化（デプロイが完了したら）
 
 REST API自動化のために、管理コンソールでAPIクライアントを作成します：
 
@@ -223,7 +217,7 @@ REST API自動化のために、管理コンソールでAPIクライアントを
 4. 認証情報を `.env` ファイルに追加
 
 
-## 使用方法
+## アウトプットの使用方法（おまけ）
 
 ### 出力の表示
 
@@ -245,9 +239,9 @@ terraform output verify_tenant_id
 ### 設定の更新
 
 1. `terraform.tfvars`の変数を変更します
-2. `terraform apply`を実行してインフラストラクチャを更新します
+2. `terraform apply`を実行してインフラを更新します
 
-### インフラストラクチャの削除
+### インフラの削除
 
 IBM Verifyインスタンスが不要になった場合：
 
@@ -267,34 +261,16 @@ chmod +x scripts/destroy.sh
 terraform destroy
 ```
 
-## 利用可能な変数
-
-> 📋 **詳細なパラメータドキュメント、例、トラブルシューティングは [PARAMETERS.md](PARAMETERS.md) を参照してください**（英語）
-
-| 変数 | 説明 | デフォルト | 必須 |
-|----------|-------------|---------|----------|
-| `ibmcloud_api_key` | IBM Cloud APIキー | - | ✅ はい |
-| `resource_group` | リソースグループ名（nullで新規作成） | null | ✅ はい |
-| `instance_name` | IBM Verifyインスタンス名 | - | ✅ はい |
-| `hostname` | ダッシュボードURL用ホスト名（`<hostname>.verify.ibm.com`） | - | ✅ はい |
-| `prefix` | 新規リソースグループ作成時のプレフィックス | verify | いいえ |
-| `region` | IBM Cloudリージョン（eu-deのみ） | eu-de | いいえ |
-| `resource_tags` | リソースタグ | [] | いいえ |
-| `access_tags` | アクセス制御用アクセスタグ | [] | いいえ |
-| `env_file_path` | .envファイルへのパス | .env | いいえ |
 
 ## 重要: リージョンの利用可能性
 
 **IBM Verifyは`eu-de`（フランクフルト）リージョンでのみ利用可能です。**
 
-IBM Verifyは具体的に以下のリージョンへのデプロイが必要です：
-- `eu-de` - フランクフルト、ドイツ
-
 他のリージョンへのデプロイを試みると、デプロイメントは失敗します。
 
 ## サービスプラン
 
-サービスプランはIBM Verifyモジュールによって`verify-lite`に設定されます。これは現在IBM Verifyで利用可能な唯一のプランです。
+サービスプランはIBM Verifyモジュールによって`verify-lite`に設定されます。これも固定です。
 
 ## 出力
 
@@ -310,13 +286,6 @@ IBM Verifyは具体的に以下のリージョンへのデプロイが必要で�
 
 ## トラブルシューティング
 
-### 認証エラー
-
-認証エラーが発生した場合：
-1. APIキーが正しいことを確認してください
-2. APIキーに必要な権限があることを確認してください
-3. アカウントが指定されたリージョンにアクセスできることを確認してください
-
 ### リソースグループが見つからない
 
 指定されたリソースグループが存在しない場合：
@@ -327,7 +296,7 @@ IBM Verifyは具体的に以下のリージョンへのデプロイが必要で�
 
 ## 環境ファイルの生成
 
-Terraform設定は、アプリケーションに必要なすべての設定を含む`.env`ファイルを自動的に生成します：
+Terraformは、アプリケーションに必要なすべての設定を含む`.env`ファイルを自動的に生成します：
 
 ```env
 IBM_VERIFY_HOSTNAME=mycompany.verify.ibm.com
@@ -348,10 +317,6 @@ IBM_VERIFY_INSTANCE_ID=761a3384-06b8-4cde-ac4d-91bd0d535f7c
 - [Terraform ドキュメント](https://www.terraform.io/docs)
 - [IBM Cloud CLI](https://cloud.ibm.com/docs/cli)
 
-### プロジェクトガイド
-- [QUICKSTART.ja.md](QUICKSTART.ja.md) - 5分デプロイメントガイド
-- [GETTING_STARTED.md](GETTING_STARTED.md) - 詳細なウォークスルー（英語）
-- [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) - プロジェクト概要（英語）
 
 ## クイックスタート
 

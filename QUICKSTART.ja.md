@@ -59,7 +59,7 @@ chmod +x scripts/update_env.sh
 - クライアントIDとシークレット
 - テナントID
 
-これらをアプリケーションで読み込むことができます！
+これらをアプリで読み込むことでIBM Verifyを使えます！
 
 ## 次のステップ
 
@@ -84,7 +84,7 @@ REST APIを使用するには：
 - [IBM Verify ドキュメント](https://www.ibm.com/docs/en/security-verify) - 公式ドキュメント
 - `terraform output` を実行してすべての利用可能な値を確認
 
-## クリーンアップが必要ですか？
+## インフラを削除する場合
 
 ### Windows
 ```powershell
@@ -105,10 +105,6 @@ REST APIを使用するには：
 ### Q: なぜeu-deリージョンだけなのですか？
 
 A: IBM Verifyサービスは現在フランクフルト（eu-de）リージョンでのみ提供されています。
-
-### Q: 無料で使えますか？
-
-A: はい！「lite」プランは無料で利用でき、開発やテスト目的に最適です。本番環境での使用には「graduated-tier」プランをご検討ください。
 
 ### Q: .envファイルはどのように使用しますか？
 
@@ -135,16 +131,6 @@ hostname = os.getenv('IBM_VERIFY_HOSTNAME')
 private String hostname;
 ```
 
-### Q: 既存のIBM Verifyインスタンスをインポートできますか？
-
-A: はい、Terraformの`import`コマンドを使用できます：
-```bash
-terraform import ibm_resource_instance.verify_instance <instance-id>
-```
-
-### Q: 複数のインスタンスを作成できますか？
-
-A: はい、`service_name`変数を変更するか、Terraformワークスペースを使用して複数のインスタンスを管理できます。
 
 ## トラブルシューティング
 
@@ -162,15 +148,4 @@ A: はい、`service_name`変数を変更するか、Terraformワークスペー
 
 - `region = "eu-de"`が設定されていることを確認してください
 - 組み込みの検証により、このエラーは早期に検出されるはずです
-
-## サポート
-
-問題が解決しない場合：
-1. IBM Cloudのステータスページを確認: https://cloud.ibm.com/status
-2. Terraformのログを確認: `TF_LOG=DEBUG terraform apply`
-3. IBM Cloudサポートに問い合わせ: https://cloud.ibm.com/unifiedsupport/supportcenter
-
----
-
-**準備完了です！** 🚀 IBM Verifyを使った開発をお楽しみください！
 
