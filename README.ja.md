@@ -337,5 +337,5 @@ IBM_VERIFY_INSTANCE_ID=761a3384-06b8-4cde-ac4d-91bd0d535f7c
 
 ## クイックスタート
 
-より簡単な手順については、[QUICKSTART.md](QUICKSTART.md)をご覧ください（英語）。
+より簡単な手順については、[QUICKSTART.ja.md](QUICKSTART.ja.md)をご覧ください。
 
