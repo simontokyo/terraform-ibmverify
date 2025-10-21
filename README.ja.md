@@ -2,12 +2,9 @@
 
 ## IBM Verifyについて
 
-[IBM Verify](https://www.ibm.com/products/verify)は、IDおよびアクセス管理（IAM）ソリューションで、以下を提供します：
+[IBM Verify](https://www.ibm.com/products/verify)は、IDおよびアクセス管理（IAM）ソリューションです：
 
-- **シングルサインオン（SSO）** - アプリケーション間の統一されたアクセス
-- **多要素認証（MFA）** - SMS、TOTP、生体認証による強化されたセキュリティ
-- **パスワードレス認証** - FIDO2 WebAuthnサポート
-- **ユーザーライフサイクル管理** - ユーザーとグループのアクセス制御
+- **シングルサインオン（SSO）、多要素認証（MFA）、パスワードレス認証、ユーザーとグループのアクセス制御**
 
 ## このTerraform設定について
 
@@ -15,7 +12,6 @@
 
 - **自動プロビジョニング** - 単一のコマンドでIBM Verifyインスタンスをデプロイ
 - **認証情報管理** - サービス認証情報と.envファイルの生成
-- **ホスト名自動化** - ダッシュボードURLの自動設定
 
 **使用する公式IBMモジュール:**
 - [terraform-ibm-modules/security-verify/ibm](https://registry.terraform.io/modules/terraform-ibm-modules/security-verify/ibm/latest) v1.1.1
