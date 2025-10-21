@@ -22,7 +22,7 @@
 始める前に、以下をご用意ください：
 
 1. **Terraform** がインストールされていること（バージョン1.0以上）
-   - ダウンロード: https://www.terraform.io/downloads
+   - ダウンロード: https://developer.hashicorp.com/terraform/install
 
 2. **IBM Cloudアカウント**
    - サインアップ: https://cloud.ibm.com/registration
