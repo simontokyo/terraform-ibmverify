@@ -48,7 +48,7 @@ graph TB
         subgraph "Terraform設定"
             Providers[providers.tf<br/>IBM Cloudプロバイダー]
             Variables[variables.tf<br/>入力変数]
-            Main[main.tf<br/>モジュール定義]
+            Main[main.tf<br/>リソース統合]
             Outputs[outputs.tf<br/>出力値]
             Template[templates/env.tpl<br/>環境変数テンプレート]
         end
@@ -58,15 +58,24 @@ graph TB
         IAM[IBM Cloud IAM<br/>認証]
         
         subgraph "リソースグループモジュール"
-            RGModule[リソースグループモジュール<br/>名前からIDへ変換]
+            RGModule[terraform-ibm-modules/resource-group]
+            RGResolved[リソースグループID]
         end
         
-        subgraph "IBM Verifyサービス"
-            ISVModule[Verifyモジュール<br/>インスタンス作成]
-            VerifyInstance[IBM Verifyインスタンス]
-            Credentials[サービス認証情報<br/>Administrator権限]
-            AccessTags[アクセスタグ]
+        subgraph "Verifyモジュール"
+            ISVModule[terraform-ibm-modules/security-verify]
+            VerifyInstance[IBM Verifyインスタンス<br/>ホスト名とタグ付き]
         end
+        
+        subgraph "サービス認証情報"
+            ResourceKey[ibm_resource_key<br/>Administrator権限]
+            CredsJSON[認証情報JSON<br/>tenant/client/secret]
+        end
+    end
+    
+    subgraph "データ処理"
+        Locals[localsブロック<br/>解析とURL構築]
+        LocalFile[local_fileリソース<br/>テンプレートレンダリング]
     end
     
     User -->|1. 設定| TFVars
@@ -74,23 +83,33 @@ graph TB
     Scripts -->|3. 初期化| Providers
     
     Providers -->|4. 認証| IAM
-    
-    Main -->|5. グループ解決| RGModule
-    RGModule -->|6. IDを提供| ISVModule
-    
-    ISVModule -->|7. 作成| VerifyInstance
-    ISVModule -->|8. 適用| AccessTags
-    
-    Main -->|9. 生成| Credentials
-    Credentials -->|10. データ抽出| Template
-    Template -->|11. 書き込み| EnvFile
-    
-    Outputs -->|12. 表示| User
-    
-    EnvFile -.->|13. アプリで読み込み| User
-    
     Variables --> Main
     TFVars --> Variables
+    
+    Main -->|5. 呼び出し| RGModule
+    RGModule -->|6. 返却| RGResolved
+    
+    Main -->|7. resource_group_idで呼び出し| ISVModule
+    RGResolved -->|IDを提供| ISVModule
+    ISVModule -->|8. プロビジョン| VerifyInstance
+    
+    Main -->|9. インスタンスに対して作成| ResourceKey
+    VerifyInstance -->|guidが必要| ResourceKey
+    ResourceKey -->|10. 生成| CredsJSON
+    
+    Main -->|11. credentials_jsonを解析| Locals
+    CredsJSON --> Locals
+    VerifyInstance -->|account_urlとguid| Locals
+    
+    Main -->|12. テンプレートをレンダリング| LocalFile
+    Locals -->|変数を提供| LocalFile
+    Template -->|テンプレートファイル| LocalFile
+    LocalFile -->|13. 書き込み| EnvFile
+    
+    Outputs -->|14. 表示| User
+    Locals -->|値を提供| Outputs
+    
+    EnvFile -.->|15. アプリで読み込み| User
 ```
 
 ## プロジェクト構成
@@ -119,15 +138,17 @@ graph TB
 2. **スクリプト実行**: デプロイメントスクリプトを実行してTerraformを操作
 3. **プロバイダー初期化**: TerraformがIBM Cloudプロバイダーを初期化
 4. **認証**: プロバイダーがIBM Cloud IAMで認証
-5. **リソースグループ解決**: モジュールがリソースグループ名をIDに変換
-6. **モジュールプロビジョニング**: VerifyモジュールがリソースグループIDを受け取る
-7. **インスタンス作成**: eu-deリージョンにIBM Verifyインスタンスを作成
-8. **アクセスタグ適用**: インスタンスにアクセスタグを適用
-9. **認証情報生成**: Administratorロールでサービス認証情報を生成
-10. **データ抽出**: ホスト名、URL、認証情報を抽出
-11. **環境ファイル生成**: すべての設定で`.env`ファイルを書き込み
-12. **出力表示**: デプロイメント結果をユーザーに表示
-13. **アプリケーション統合**: アプリケーションで`.env`の認証情報を読み込み
+5. **リソースグループモジュール呼び出し**: `main.tf`がresource-groupモジュールを呼び出し
+6. **リソースグループID解決**: モジュールが解決されたリソースグループIDを返却
+7. **Verifyモジュール呼び出し**: `main.tf`がresource_group_idを使用してsecurity-verifyモジュールを呼び出し
+8. **インスタンスプロビジョニング**: モジュールがホスト名とタグを持つIBM Verifyインスタンスをプロビジョン
+9. **認証情報リソース作成**: `main.tf`がインスタンス用の`ibm_resource_key`を作成
+10. **認証情報生成**: リソースキーがAdministratorロールでJSON認証情報を生成
+11. **データ解析**: `locals`ブロックがcredentials_jsonを解析してURLを構築
+12. **テンプレートレンダリング**: `local_file`リソースが解析データを使用してテンプレートをレンダリング
+13. **環境ファイル書き込み**: テンプレート出力が`.env`ファイルに書き込まれる
+14. **出力表示**: `outputs.tf`がlocalsの値を使用してデプロイメント結果を表示
+15. **アプリケーション統合**: アプリケーションで`.env`の認証情報を読み込み
 
 ## セットアップ手順
 

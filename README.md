@@ -55,7 +55,7 @@ graph TB
         subgraph "Terraform Configuration"
             Providers[providers.tf<br/>IBM Cloud Provider]
             Variables[variables.tf<br/>Input Variables]
-            Main[main.tf<br/>Module Definitions]
+            Main[main.tf<br/>Resource Orchestration]
             Outputs[outputs.tf<br/>Output Values]
             Template[templates/env.tpl<br/>Environment Template]
         end
@@ -65,15 +65,24 @@ graph TB
         IAM[IBM Cloud IAM<br/>Authentication]
         
         subgraph "Resource Group Module"
-            RGModule[Resource Group Module<br/>Name to ID Resolution]
+            RGModule[terraform-ibm-modules/resource-group]
+            RGResolved[Resource Group ID]
         end
         
-        subgraph "IBM Verify Service"
-            ISVModule[Verify Module<br/>Instance Creation]
-            VerifyInstance[IBM Verify Instance]
-            Credentials[Service Credentials<br/>Administrator Role]
-            AccessTags[Access Tags]
+        subgraph "Verify Module"
+            ISVModule[terraform-ibm-modules/security-verify]
+            VerifyInstance[IBM Verify Instance<br/>with hostname & tags]
         end
+        
+        subgraph "Service Credentials"
+            ResourceKey[ibm_resource_key<br/>Administrator Role]
+            CredsJSON[Credentials JSON<br/>tenant/client/secret]
+        end
+    end
+    
+    subgraph "Data Processing"
+        Locals[locals block<br/>Parse & Construct URLs]
+        LocalFile[local_file resource<br/>Template Rendering]
     end
     
     User -->|1. Configure| TFVars
@@ -81,23 +90,33 @@ graph TB
     Scripts -->|3. Initialize| Providers
     
     Providers -->|4. Authenticate| IAM
-    
-    Main -->|5. Resolve Group| RGModule
-    RGModule -->|6. Provide ID| ISVModule
-    
-    ISVModule -->|7. Create| VerifyInstance
-    ISVModule -->|8. Apply| AccessTags
-    
-    Main -->|9. Generate| Credentials
-    Credentials -->|10. Extract Data| Template
-    Template -->|11. Write| EnvFile
-    
-    Outputs -->|12. Display| User
-    
-    EnvFile -.->|13. Load in App| User
-    
     Variables --> Main
     TFVars --> Variables
+    
+    Main -->|5. Call| RGModule
+    RGModule -->|6. Return| RGResolved
+    
+    Main -->|7. Call with resource_group_id| ISVModule
+    RGResolved -->|provides ID| ISVModule
+    ISVModule -->|8. Provision| VerifyInstance
+    
+    Main -->|9. Create for instance| ResourceKey
+    VerifyInstance -->|requires guid| ResourceKey
+    ResourceKey -->|10. Generate| CredsJSON
+    
+    Main -->|11. Parse credentials_json| Locals
+    CredsJSON --> Locals
+    VerifyInstance -->|account_url & guid| Locals
+    
+    Main -->|12. Render template| LocalFile
+    Locals -->|provide variables| LocalFile
+    Template -->|template file| LocalFile
+    LocalFile -->|13. Write| EnvFile
+    
+    Outputs -->|14. Display| User
+    Locals -->|provide values| Outputs
+    
+    EnvFile -.->|15. Load in App| User
 ```
 
 ## Project Structure
@@ -126,15 +145,17 @@ graph TB
 2. **Script Execution**: Run deployment script to orchestrate Terraform
 3. **Provider Initialization**: Terraform initializes IBM Cloud provider
 4. **Authentication**: Provider authenticates with IBM Cloud IAM
-5. **Resource Group Resolution**: Module converts resource group name to ID
-6. **Module Provisioning**: Verify module receives resource group ID
-7. **Instance Creation**: Create IBM Verify instance in eu-de region
-8. **Access Tags Application**: Apply access tags to the instance
-9. **Credential Generation**: Generate service credentials with Administrator role
-10. **Data Extraction**: Extract hostname, URLs, and credentials
-11. **Environment File Generation**: Write `.env` file with all configuration
-12. **Output Display**: Show deployment results to user
-13. **Application Integration**: Load `.env` credentials in your application
+5. **Resource Group Module Call**: `main.tf` calls resource-group module
+6. **Resource Group ID Resolution**: Module returns resolved resource group ID
+7. **Verify Module Call**: `main.tf` calls security-verify module with resource_group_id
+8. **Instance Provisioning**: Module provisions IBM Verify instance with hostname and tags
+9. **Credential Resource Creation**: `main.tf` creates `ibm_resource_key` for the instance
+10. **Credentials Generation**: Resource key generates JSON credentials with Administrator role
+11. **Data Parsing**: `locals` block parses credentials_json and constructs URLs
+12. **Template Rendering**: `local_file` resource renders template with parsed data
+13. **Environment File Writing**: Template output written to `.env` file
+14. **Output Display**: `outputs.tf` displays deployment results using locals values
+15. **Application Integration**: Load `.env` credentials in your application
 
 ## Setup Instructions
 
