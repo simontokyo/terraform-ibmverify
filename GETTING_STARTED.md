@@ -94,7 +94,6 @@ After deployment, you'll have:
 ## 📖 Documentation
 
 - **[README.md](README.md)** - Complete documentation
-- **[PARAMETERS.md](PARAMETERS.md)** - All parameters explained
 - **[QUICKSTART.md](QUICKSTART.md)** - Quick reference guide
 - **[README.ja.md](README.ja.md)** - 日本語版ドキュメント
 
@@ -228,7 +227,7 @@ After deployment:
 
 ## 🆘 Need Help?
 
-1. Check [PARAMETERS.md](PARAMETERS.md) for detailed parameter docs
+1. Check the Available Variables section in README.md for detailed parameter docs
 2. Review [README.md](README.md) for full documentation
 3. Check IBM Cloud status: https://cloud.ibm.com/status
 4. IBM Cloud support: https://cloud.ibm.com/unifiedsupport/supportcenter

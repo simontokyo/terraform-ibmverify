@@ -16,7 +16,6 @@ verify2/
 │   ├── README.md                 # Complete documentation
 │   ├── QUICKSTART.md             # 5-minute quick start guide
 │   ├── GETTING_STARTED.md        # Detailed getting started guide
-│   ├── PARAMETERS.md             # Parameter reference
 │   ├── CONFIGURATION_SUMMARY.md  # Configuration overview
 │   ├── MIGRATION.md              # Migration guide
 │   ├── SUCCESS_SUMMARY.md        # Deployment readiness checklist
@@ -80,7 +79,6 @@ Example configuration showing required parameters
 - **README.md**: Complete documentation with architecture diagram
 - **QUICKSTART.md**: Get started in 5 minutes
 - **GETTING_STARTED.md**: Detailed step-by-step guide
-- **PARAMETERS.md**: All parameters explained with examples
 - **CONFIGURATION_SUMMARY.md**: Quick configuration reference
 - **MIGRATION.md**: Guide for migrating from direct resources
 - **SUCCESS_SUMMARY.md**: Deployment readiness checklist
@@ -199,7 +197,6 @@ terraform destroy
 |----------|---------|----------|
 | [README.md](README.md) | Complete docs | 🇬🇧 English |
 | [QUICKSTART.md](QUICKSTART.md) | 5-min guide | 🇬🇧 English |
-| [PARAMETERS.md](PARAMETERS.md) | Parameter details | 🇬🇧 English |
 | [SUCCESS_SUMMARY.md](SUCCESS_SUMMARY.md) | This status | 🇬🇧 English |
 | [README.ja.md](README.ja.md) | 完全ドキュメント | 🇯🇵 日本語 |
 | [QUICKSTART.ja.md](QUICKSTART.ja.md) | クイックガイド | 🇯🇵 日本語 |

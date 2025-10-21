@@ -291,8 +291,6 @@ terraform destroy
 
 ## Available Variables
 
-> 📋 **See [PARAMETERS.md](PARAMETERS.md)** for detailed parameter documentation, examples, and troubleshooting.
-
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
 | `ibmcloud_api_key` | IBM Cloud API Key | - | ✅ Yes |
